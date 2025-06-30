@@ -8,6 +8,8 @@ const AccountComponent = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("username");
   const [sortOrder, setSortOrder] = useState("asc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -29,6 +31,10 @@ const AccountComponent = () => {
     fetchUsers();
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, sortBy, sortOrder]);
+
   const filteredAndSortedUsers = users
     .filter((user) =>
       [user.username, user.email, user.phone, user.address, user.role]
@@ -43,6 +49,13 @@ const AccountComponent = () => {
         ? aVal.localeCompare(bVal)
         : bVal.localeCompare(aVal);
     });
+
+  const totalPages = Math.ceil(filteredAndSortedUsers.length / itemsPerPage);
+
+  const paginatedUsers = filteredAndSortedUsers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleSort = (field) => {
     if (sortBy === field) {
@@ -106,7 +119,7 @@ const AccountComponent = () => {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full rounded-2xl overflow-hidden shadow border">
               <thead className="bg-[#C9E6F0]">
                 <tr>
                   {["username", "email", "phone", "role"].map((field) => (
@@ -126,13 +139,13 @@ const AccountComponent = () => {
                       </button>
                     </th>
                   ))}
-                  <th className="px-6 py-4 text-left text-[#78B3CE] font-semibold">
+                  <th className="px-6 py-4 text-left font-semibold text-[#78B3CE]">
                     Địa chỉ
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredAndSortedUsers.map((user, index) => (
+                {paginatedUsers.map((user, index) => (
                   <tr
                     key={user.email}
                     className={`hover:bg-[#FBF8EF] transition-colors ${
@@ -149,6 +162,47 @@ const AccountComponent = () => {
               </tbody>
             </table>
           </div>
+
+          {filteredAndSortedUsers.length > 0 && (
+            <div className="flex items-center justify-between bg-white rounded-2xl shadow p-4 mt-6">
+              <div className="text-sm text-gray-700">
+                Trang {currentPage} / {totalPages}
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
+                >
+                  Trước
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i + 1}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`px-3 py-2 text-sm font-medium rounded ${
+                      currentPage === i + 1
+                        ? "bg-[#F96E2A] text-white"
+                        : "bg-white border border-gray-300 text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
+                >
+                  Sau
+                </button>
+              </div>
+            </div>
+          )}
 
           {filteredAndSortedUsers.length === 0 && (
             <div className="text-center py-12">

@@ -35,6 +35,8 @@ const ProductComponent = () => {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showViewModal, setShowViewModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
 
   // Form state cho thêm/sửa sản phẩm
   const [formData, setFormData] = useState({
@@ -107,6 +109,11 @@ const ProductComponent = () => {
     }
   }, [categories]);
 
+  //Phân trang
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterCategory, sortBy, sortOrder]);
+
   // Hàm format giá tiền
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -144,6 +151,13 @@ const ProductComponent = () => {
         return aValue < bValue ? 1 : -1;
       }
     });
+  // Hàm phân trang
+  const totalPages = Math.ceil(filteredAndSortedProducts.length / itemsPerPage);
+
+  const paginatedProducts = filteredAndSortedProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleSort = (field) => {
     if (sortBy === field) {
@@ -561,7 +575,7 @@ const ProductComponent = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {filteredAndSortedProducts.map((product, index) => (
+                  {paginatedProducts.map((product, index) => (
                     <tr
                       key={product.productID}
                       className={`hover:bg-[#FBF8EF] transition-colors ${
@@ -655,20 +669,36 @@ const ProductComponent = () => {
         {filteredAndSortedProducts.length > 0 && (
           <div className="flex items-center justify-between bg-white rounded-xl shadow-lg p-4">
             <div className="text-sm text-gray-700">
-              Hiển thị{" "}
-              <span className="font-medium">
-                {filteredAndSortedProducts.length}
-              </span>{" "}
-              sản phẩm
+              Trang {currentPage} / {totalPages}
             </div>
             <div className="flex items-center space-x-2">
-              <button className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+              >
                 Trước
               </button>
-              <button className="px-3 py-2 text-sm font-medium text-white bg-[#F96E2A] border border-transparent rounded-lg hover:bg-[#e55a1f]">
-                1
-              </button>
-              <button className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`px-3 py-2 text-sm font-medium rounded-lg ${
+                    currentPage === i + 1
+                      ? "bg-[#F96E2A] text-white"
+                      : "bg-white text-gray-500 border border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+                className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+              >
                 Sau
               </button>
             </div>

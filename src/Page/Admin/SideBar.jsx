@@ -9,19 +9,11 @@ const SideBar = () => {
 
   const menuItems = [
     {
-      id: "dashboard",
-      title: "Dashboard",
-      icon: "📊",
-      path: "/admin/dashboard",
-      hasDropdown: false,
-    },
-    {
       id: "users",
       title: "Quản lý người dùng",
       icon: "👥",
       path: "/admin/users",
       hasDropdown: false,
-     
     },
     {
       id: "products",
@@ -29,7 +21,6 @@ const SideBar = () => {
       icon: "📦",
       path: "/admin/products",
       hasDropdown: false,
-     
     },
     {
       id: "orders",
@@ -39,8 +30,8 @@ const SideBar = () => {
       hasDropdown: true,
       subItems: [
         { title: "Đơn hàng mới", path: "/admin/orders/new" },
-        { title: "Đang xử lý", path: "/admin/orders/processing" },
-        { title: "Đã hoàn thành", path: "/admin/orders/completed" },
+        { title: "Đang xử lý", path: "/admin/orders/delivered" },
+        { title: "Đã hoàn thành", path: "/admin/orders/shipped" },
         { title: "Đã hủy", path: "/admin/orders/cancelled" },
       ],
     },

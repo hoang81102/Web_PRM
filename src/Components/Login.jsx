@@ -14,9 +14,11 @@ const Login = () => {
     const result = await loginUser(email, password);
 
     if (result.success) {
-      navigate("/admin/dashboard");
+      navigate("/admin/users");
     }
-    // Không cần toast ở đây vì đã xử lý trong loginUser
+    else {
+      toast.error(result.message || "Đăng nhập không thành công. Vui lòng thử lại.");
+    }
   };
 
   return (
