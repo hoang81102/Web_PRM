@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "../Page/Admin/AdminLayout";
 import { getAllUsers } from "../API/userApi";
-import { toast } from "react-toastify";
 
 const AccountComponent = () => {
   const [users, setUsers] = useState([]);
@@ -24,7 +23,7 @@ const AccountComponent = () => {
         }));
         setUsers(mappedUsers);
       } catch (error) {
-        toast.error("Tải danh sách người dùng thất bại!");
+        // No notification when error
       }
     };
 
@@ -71,17 +70,17 @@ const AccountComponent = () => {
       <div className="space-y-6">
         <div className="bg-white rounded-2xl shadow-lg p-6">
           <h1 className="text-3xl font-bold text-[#78B3CE] mb-2">
-            Quản lý tài khoản người dùng
+            User Account Management
           </h1>
           <p className="text-gray-600 mb-4">
-            Danh sách thông tin chi tiết của tất cả người dùng trong hệ thống
+            Detailed information of all users in the system.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <input
                 type="text"
-                placeholder="Tìm kiếm theo username, email, SĐT, địa chỉ, quyền..."
+                placeholder="Search by username, email, phone, address, role..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full p-3 pl-10 border-2 border-[#C9E6F0] rounded-xl"
@@ -103,10 +102,10 @@ const AccountComponent = () => {
               <option value="username-desc">Username Z-A</option>
               <option value="email-asc">Email A-Z</option>
               <option value="email-desc">Email Z-A</option>
-              <option value="phone-asc">SĐT tăng dần</option>
-              <option value="phone-desc">SĐT giảm dần</option>
-              <option value="role-asc">Quyền A-Z</option>
-              <option value="role-desc">Quyền Z-A</option>
+              <option value="phone-asc">Phone Ascending</option>
+              <option value="phone-desc">Phone Descending</option>
+              <option value="role-asc">Role A-Z</option>
+              <option value="role-desc">Role Z-A</option>
             </select>
           </div>
         </div>
@@ -114,7 +113,7 @@ const AccountComponent = () => {
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-xl font-bold text-[#78B3CE]">
-              Danh sách người dùng ({filteredAndSortedUsers.length})
+              User List ({filteredAndSortedUsers.length})
             </h2>
           </div>
 
@@ -140,7 +139,7 @@ const AccountComponent = () => {
                     </th>
                   ))}
                   <th className="px-6 py-4 text-left font-semibold text-[#78B3CE]">
-                    Địa chỉ
+                    Address
                   </th>
                 </tr>
               </thead>
@@ -166,7 +165,7 @@ const AccountComponent = () => {
           {filteredAndSortedUsers.length > 0 && (
             <div className="flex items-center justify-between bg-white rounded-2xl shadow p-4 mt-6">
               <div className="text-sm text-gray-700">
-                Trang {currentPage} / {totalPages}
+                Page {currentPage} / {totalPages}
               </div>
               <div className="flex items-center space-x-2">
                 <button
@@ -176,7 +175,7 @@ const AccountComponent = () => {
                   disabled={currentPage === 1}
                   className="px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
                 >
-                  Trước
+                  Previous
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => (
                   <button
@@ -198,7 +197,7 @@ const AccountComponent = () => {
                   disabled={currentPage === totalPages}
                   className="px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
                 >
-                  Sau
+                  Next
                 </button>
               </div>
             </div>
@@ -208,10 +207,10 @@ const AccountComponent = () => {
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🔍</div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Không tìm thấy người dùng
+                No users found
               </h3>
               <p className="text-gray-500">
-                Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc
+                Try changing the search keywords or filter
               </p>
             </div>
           )}

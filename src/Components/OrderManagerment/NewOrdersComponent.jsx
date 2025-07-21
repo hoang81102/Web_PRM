@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "../../Page/Admin/AdminLayout";
 import { getOrdersByStatus } from "../../API/orderApi";
-import { toast } from "react-toastify";
 
 const PendingOrdersComponent = () => {
   const [orders, setOrders] = useState([]);
@@ -32,7 +31,8 @@ const PendingOrdersComponent = () => {
           );
         }
       } catch (error) {
-        toast.error("Không thể tải danh sách đơn hàng Pending!");
+        console.error("Failed to load pending orders:", error);
+        // Đã xóa toast.error
       } finally {
         setLoading(false);
       }
@@ -43,7 +43,7 @@ const PendingOrdersComponent = () => {
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleString("vi-VN");
+    return date.toLocaleString("en-US");
   };
 
   const filteredAndSortedOrders = orders
@@ -63,23 +63,23 @@ const PendingOrdersComponent = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg p-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
             <div>
               <h1 className="text-3xl font-bold text-[#78B3CE] mb-2">
-                Đơn hàng Pending
+                Pending Orders
               </h1>
-              <p className="text-gray-600">Danh sách đơn hàng chờ xử lý</p>
+              <p className="text-gray-600">
+                List of orders waiting for processing
+              </p>
             </div>
           </div>
 
-          {/* Search and Filter */}
           <div className="flex flex-col lg:flex-row gap-3">
             <div className="relative flex-1">
               <input
                 type="text"
-                placeholder="Tìm kiếm theo mã đơn hàng, tên khách hàng, email, SĐT..."
+                placeholder="Search by Order ID, Customer Name, Email, Phone..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full p-3 pl-10 border-2 border-[#C9E6F0] rounded-xl focus:border-[#78B3CE] outline-none transition-colors"
@@ -97,34 +97,33 @@ const PendingOrdersComponent = () => {
               }}
               className="p-3 border-2 border-[#C9E6F0] rounded-xl focus:border-[#78B3CE] outline-none bg-white min-w-[200px]"
             >
-              <option value="orderDate-desc">Mới nhất</option>
-              <option value="orderDate-asc">Cũ nhất</option>
+              <option value="orderDate-desc">Newest</option>
+              <option value="orderDate-asc">Oldest</option>
             </select>
           </div>
         </div>
 
-        {/* Orders Table */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-xl font-bold text-[#78B3CE]">
-              Danh sách đơn hàng Pending ({filteredAndSortedOrders.length})
+              Pending Orders List ({filteredAndSortedOrders.length})
             </h2>
           </div>
 
           {loading ? (
-            <div className="text-center py-12">Đang tải dữ liệu...</div>
+            <div className="text-center py-12">Loading data...</div>
           ) : filteredAndSortedOrders.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-[#C9E6F0]">
                   <tr>
-                    <th className="px-6 py-4 text-left">Mã đơn</th>
-                    <th className="px-6 py-4 text-left">Khách hàng</th>
-                    <th className="px-6 py-4 text-left">Ngày đặt</th>
-                    <th className="px-6 py-4 text-left">Phương thức thanh toán</th>
-                    <th className="px-6 py-4 text-left">Địa chỉ hóa đơn</th>
-                    <th className="px-6 py-4 text-left">Vai trò</th>
-                    <th className="px-6 py-4 text-left">Trạng thái</th>
+                    <th className="px-6 py-4 text-left">Order ID</th>
+                    <th className="px-6 py-4 text-left">Customer</th>
+                    <th className="px-6 py-4 text-left">Order Date</th>
+                    <th className="px-6 py-4 text-left">Payment Method</th>
+                    <th className="px-6 py-4 text-left">Billing Address</th>
+                    <th className="px-6 py-4 text-left">Role</th>
+                    <th className="px-6 py-4 text-left">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -134,12 +133,20 @@ const PendingOrdersComponent = () => {
                       <td className="px-6 py-4">
                         <div>
                           <p className="font-medium">{order.customerName}</p>
-                          <p className="text-xs text-gray-500">{order.customerEmail}</p>
-                          <p className="text-xs text-gray-500">{order.customerPhone}</p>
-                          <p className="text-xs text-gray-500">{order.customerAddress}</p>
+                          <p className="text-xs text-gray-500">
+                            {order.customerEmail}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {order.customerPhone}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {order.customerAddress}
+                          </p>
                         </div>
                       </td>
-                      <td className="px-6 py-4">{formatDateTime(order.orderDate)}</td>
+                      <td className="px-6 py-4">
+                        {formatDateTime(order.orderDate)}
+                      </td>
                       <td className="px-6 py-4">{order.paymentMethod}</td>
                       <td className="px-6 py-4">{order.billAddress}</td>
                       <td className="px-6 py-4">
@@ -160,9 +167,11 @@ const PendingOrdersComponent = () => {
           ) : (
             <div className="text-center py-12">
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Không có đơn hàng Pending
+                No pending orders
               </h3>
-              <p className="text-gray-500">Chưa có đơn nào chờ xử lý.</p>
+              <p className="text-gray-500">
+                There are currently no orders waiting for processing.
+              </p>
             </div>
           )}
         </div>

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "../../Page/Admin/AdminLayout";
 import { getOrdersByStatus } from "../../API/orderApi";
-import { toast } from "react-toastify";
 
 const DeliveredOrdersComponent = () => {
   const [orders, setOrders] = useState([]);
@@ -31,7 +30,8 @@ const DeliveredOrdersComponent = () => {
           );
         }
       } catch (error) {
-        toast.error("Không thể tải danh sách đơn hàng Delivered!");
+        console.error("Failed to load delivered orders:", error);
+        // Removed toast.error
       } finally {
         setLoading(false);
       }
@@ -42,7 +42,7 @@ const DeliveredOrdersComponent = () => {
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleString("vi-VN");
+    return date.toLocaleString("en-US");
   };
 
   const filteredAndSortedOrders = orders
@@ -56,35 +56,35 @@ const DeliveredOrdersComponent = () => {
     .sort((a, b) => {
       const aValue = new Date(a[sortBy]);
       const bValue = new Date(b[sortBy]);
-      if (sortOrder === "asc") {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
-      }
+      return sortOrder === "asc"
+        ? aValue > bValue
+          ? 1
+          : -1
+        : aValue < bValue
+        ? 1
+        : -1;
     });
 
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg p-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
             <div>
               <h1 className="text-3xl font-bold text-[#78B3CE] mb-2">
-                Đơn hàng đã giao
+                Delivered Orders
               </h1>
               <p className="text-gray-600">
-                Quản lý các đơn hàng có trạng thái Delivered
+                Manage orders that have been successfully delivered.
               </p>
             </div>
           </div>
 
-          {/* Search and Sort */}
           <div className="flex flex-col lg:flex-row gap-3">
             <div className="relative flex-1">
               <input
                 type="text"
-                placeholder="Tìm kiếm theo mã đơn hàng, tên khách hàng, email, SĐT..."
+                placeholder="Search by Order ID, Customer Name, Email, Phone..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full p-3 pl-10 border-2 border-[#C9E6F0] rounded-xl focus:border-[#78B3CE] outline-none transition-colors"
@@ -102,33 +102,32 @@ const DeliveredOrdersComponent = () => {
               }}
               className="p-3 border-2 border-[#C9E6F0] rounded-xl focus:border-[#78B3CE] outline-none bg-white min-w-[200px]"
             >
-              <option value="orderDate-desc">Mới nhất</option>
-              <option value="orderDate-asc">Cũ nhất</option>
+              <option value="orderDate-desc">Newest Delivered</option>
+              <option value="orderDate-asc">Oldest Delivered</option>
             </select>
           </div>
         </div>
 
-        {/* Orders Table */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-xl font-bold text-[#78B3CE]">
-              Danh sách đơn hàng đã giao ({filteredAndSortedOrders.length})
+              Delivered Orders List ({filteredAndSortedOrders.length})
             </h2>
           </div>
 
           {loading ? (
-            <div className="text-center py-12">Đang tải dữ liệu...</div>
+            <div className="text-center py-12">Loading data...</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-[#C9E6F0]">
                   <tr>
-                    <th className="px-6 py-4 text-left">Mã đơn hàng</th>
-                    <th className="px-6 py-4 text-left">Khách hàng</th>
-                    <th className="px-6 py-4 text-left">Ngày giao</th>
-                    <th className="px-6 py-4 text-left">Phương thức</th>
-                    <th className="px-6 py-4 text-left">Địa chỉ hóa đơn</th>
-                    <th className="px-6 py-4 text-left">Trạng thái</th>
+                    <th className="px-6 py-4 text-left">Order ID</th>
+                    <th className="px-6 py-4 text-left">Customer</th>
+                    <th className="px-6 py-4 text-left">Delivered Date</th>
+                    <th className="px-6 py-4 text-left">Payment Method</th>
+                    <th className="px-6 py-4 text-left">Billing Address</th>
+                    <th className="px-6 py-4 text-left">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -169,10 +168,10 @@ const DeliveredOrdersComponent = () => {
           {!loading && filteredAndSortedOrders.length === 0 && (
             <div className="text-center py-12">
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Không có đơn hàng Delivered
+                No delivered orders
               </h3>
               <p className="text-gray-500">
-                Hiện chưa có đơn hàng nào có trạng thái Delivered.
+                There are currently no orders with "Delivered" status.
               </p>
             </div>
           )}

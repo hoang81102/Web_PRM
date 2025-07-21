@@ -92,7 +92,7 @@ const ProductComponent = () => {
         );
         return {
           ...product,
-          categoryName: category?.categoryName || "Không có danh mục",
+          categoryName: category?.categoryName || "No category",
         };
       });
       setProducts(productsWithCategoryName);
@@ -116,11 +116,12 @@ const ProductComponent = () => {
 
   // Hàm format giá tiền
   const formatPrice = (price) => {
-    return new Intl.NumberFormat("vi-VN", {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "VND",
+      currency: "USD",
     }).format(price);
   };
+
 
   // Hàm tìm kiếm và sắp xếp
   const filteredAndSortedProducts = products
@@ -222,11 +223,13 @@ const ProductComponent = () => {
     );
 
     if (hasProducts) {
-      alert("Không thể xóa danh mục này vì còn sản phẩm thuộc danh mục!");
+      alert(
+        "This category cannot be deleted because there are products in the category!"
+      );
       return;
     }
 
-    if (window.confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
+    if (window.confirm("Are you sure you want to delete this category ?")) {
       setCategoryLoading(true);
       try {
         await deleteCategory(categoryId);
@@ -321,7 +324,7 @@ const ProductComponent = () => {
 
   // Xóa sản phẩm
   const handleDeleteProduct = async (productId) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
+    if (window.confirm("Are you sure you want to delete this product ?")) {
       setProductLoading(true);
       try {
         await deleteProduct(productId);
@@ -360,7 +363,7 @@ const ProductComponent = () => {
   const LoadingSpinner = () => (
     <div className="flex items-center justify-center py-12">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#78B3CE]"></div>
-      <span className="ml-3 text-[#78B3CE]">Đang tải...</span>
+      <span className="ml-3 text-[#78B3CE]">Loading...</span>
     </div>
   );
 
@@ -380,11 +383,9 @@ const ProductComponent = () => {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
             <div>
               <h1 className="text-3xl font-bold text-[#78B3CE] mb-2">
-                Quản lý sản phẩm
+                Product Management
               </h1>
-              <p className="text-gray-600">
-                Quản lý toàn bộ sản phẩm trong hệ thống
-              </p>
+              <p className="text-gray-600">Manage all products in the system</p>
             </div>
 
             {/* Category Management Button */}
@@ -394,7 +395,7 @@ const ProductComponent = () => {
                 className="bg-[#78B3CE] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#5a8ba3] transition-colors shadow-lg"
                 disabled={categoryLoading}
               >
-                📂 Quản lý danh mục
+                📂 Portfolio Management
               </button>
             </div>
           </div>
@@ -404,7 +405,7 @@ const ProductComponent = () => {
             <div className="relative flex-1">
               <input
                 type="text"
-                placeholder="Tìm kiếm theo tên sản phẩm, mô tả, danh mục..."
+                placeholder="Search by product name, description, category..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full p-3 pl-10 border-2 border-[#C9E6F0] rounded-xl focus:border-[#78B3CE] outline-none transition-colors"
@@ -419,7 +420,7 @@ const ProductComponent = () => {
               onChange={(e) => setFilterCategory(e.target.value)}
               className="p-3 border-2 border-[#C9E6F0] rounded-xl focus:border-[#78B3CE] outline-none bg-white min-w-[200px]"
             >
-              <option value="">Tất cả danh mục</option>
+              <option value="">All categories</option>
               {categories.map((category) => (
                 <option key={category.categoryID} value={category.categoryID}>
                   {category.categoryName}
@@ -436,11 +437,11 @@ const ProductComponent = () => {
               }}
               className="p-3 border-2 border-[#C9E6F0] rounded-xl focus:border-[#78B3CE] outline-none bg-white min-w-[200px]"
             >
-              <option value="productName-asc">Tên A-Z</option>
-              <option value="productName-desc">Tên Z-A</option>
-              <option value="price-asc">Giá tăng dần</option>
-              <option value="price-desc">Giá giảm dần</option>
-              <option value="categoryName-asc">Danh mục A-Z</option>
+              <option value="productName-asc">A-Z Name</option>
+              <option value="productName-desc">Z-A Name</option>
+              <option value="price-asc">Price increases </option>
+              <option value="price-desc">Price decreasing</option>
+              <option value="categoryName-asc">A-Z Category</option>
             </select>
           </div>
         </div>
@@ -450,7 +451,7 @@ const ProductComponent = () => {
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 text-sm">Tổng sản phẩm</p>
+                <p className="text-gray-500 text-sm">Total product</p>
                 <p className="text-2xl font-bold text-[#78B3CE]">
                   {products.length}
                 </p>
@@ -464,7 +465,7 @@ const ProductComponent = () => {
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 text-sm">Kết quả tìm kiếm</p>
+                <p className="text-gray-500 text-sm">Search results</p>
                 <p className="text-2xl font-bold text-[#F96E2A]">
                   {filteredAndSortedProducts.length}
                 </p>
@@ -478,7 +479,7 @@ const ProductComponent = () => {
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 text-sm">Danh mục</p>
+                <p className="text-gray-500 text-sm">Category</p>
                 <p className="text-2xl font-bold text-green-600">
                   {categories.length}
                 </p>
@@ -494,14 +495,14 @@ const ProductComponent = () => {
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="p-6 border-b border-gray-200 flex items-center justify-between">
             <h2 className="text-xl font-bold text-[#78B3CE]">
-              Danh sách sản phẩm ({filteredAndSortedProducts.length})
+              Product List ({filteredAndSortedProducts.length})
             </h2>
             <button
               onClick={() => setShowAddModal(true)}
               className="bg-[#F96E2A] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#e55a1f] transition-colors shadow-lg"
               disabled={productLoading}
             >
-              ➕ Thêm sản phẩm mới
+              ➕ Add new product
             </button>
           </div>
 
@@ -514,7 +515,7 @@ const ProductComponent = () => {
                   <tr>
                     <th className="px-6 py-4 text-left">
                       <span className="font-semibold text-[#78B3CE]">
-                        Hình ảnh
+                        Image
                       </span>
                     </th>
                     <th className="px-6 py-4 text-left">
@@ -534,7 +535,7 @@ const ProductComponent = () => {
                     </th>
                     <th className="px-6 py-4 text-left">
                       <span className="font-semibold text-[#78B3CE]">
-                        Mô tả
+                        Describe
                       </span>
                     </th>
                     <th className="px-6 py-4 text-left">
@@ -542,7 +543,7 @@ const ProductComponent = () => {
                         onClick={() => handleSort("price")}
                         className="flex items-center space-x-1 font-semibold text-[#78B3CE] hover:text-[#F96E2A] transition-colors"
                       >
-                        <span>Giá</span>
+                        <span>Price</span>
                         <span className="text-xs">
                           {sortBy === "price"
                             ? sortOrder === "asc"
@@ -557,7 +558,7 @@ const ProductComponent = () => {
                         onClick={() => handleSort("categoryName")}
                         className="flex items-center space-x-1 font-semibold text-[#78B3CE] hover:text-[#F96E2A] transition-colors"
                       >
-                        <span>Danh mục</span>
+                        <span>Category</span>
                         <span className="text-xs">
                           {sortBy === "categoryName"
                             ? sortOrder === "asc"
@@ -569,7 +570,7 @@ const ProductComponent = () => {
                     </th>
                     <th className="px-6 py-4 text-center">
                       <span className="font-semibold text-[#78B3CE]">
-                        Thao tác
+                        Action
                       </span>
                     </th>
                   </tr>
@@ -621,14 +622,14 @@ const ProductComponent = () => {
                           <button
                             onClick={() => handleViewProduct(product)}
                             className="p-2 text-[#78B3CE] hover:bg-[#C9E6F0] rounded-lg transition-colors"
-                            title="Xem chi tiết"
+                            title="View Details"
                           >
                             👁️
                           </button>
                           <button
                             onClick={() => handleEditProduct(product)}
                             className="p-2 text-[#F96E2A] hover:bg-orange-100 rounded-lg transition-colors"
-                            title="Chỉnh sửa"
+                            title="Edit"
                             disabled={productLoading}
                           >
                             ✏️
@@ -638,7 +639,7 @@ const ProductComponent = () => {
                               handleDeleteProduct(product.productID)
                             }
                             className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                            title="Xóa"
+                            title="Delete"
                             disabled={productLoading}
                           >
                             🗑️
@@ -656,10 +657,10 @@ const ProductComponent = () => {
             <div className="text-center py-12">
               <div className="text-6xl mb-4">📦</div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Không tìm thấy sản phẩm
+                No products found
               </h3>
               <p className="text-gray-500">
-                Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc
+                Try changing your search keywords or filters
               </p>
             </div>
           )}
@@ -669,7 +670,7 @@ const ProductComponent = () => {
         {filteredAndSortedProducts.length > 0 && (
           <div className="flex items-center justify-between bg-white rounded-xl shadow-lg p-4">
             <div className="text-sm text-gray-700">
-              Trang {currentPage} / {totalPages}
+              Page {currentPage} / {totalPages}
             </div>
             <div className="flex items-center space-x-2">
               <button
@@ -677,7 +678,7 @@ const ProductComponent = () => {
                 disabled={currentPage === 1}
                 className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
               >
-                Trước
+                Previous
               </button>
               {Array.from({ length: totalPages }, (_, i) => (
                 <button
@@ -699,7 +700,7 @@ const ProductComponent = () => {
                 disabled={currentPage === totalPages}
                 className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
               >
-                Sau
+                Next
               </button>
             </div>
           </div>

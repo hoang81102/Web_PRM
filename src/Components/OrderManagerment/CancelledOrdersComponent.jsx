@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "../../Page/Admin/AdminLayout";
 import { getOrdersByStatus } from "../../API/orderApi";
-import { toast } from "react-toastify";
 
 const CancelledOrdersComponent = () => {
   const [orders, setOrders] = useState([]);
@@ -30,7 +29,8 @@ const CancelledOrdersComponent = () => {
           );
         }
       } catch (error) {
-        toast.error("Không thể tải danh sách đơn hàng đã hủy!");
+        console.error("Failed to load cancelled orders:", error);
+        // Removed toast.error here
       } finally {
         setLoading(false);
       }
@@ -41,7 +41,7 @@ const CancelledOrdersComponent = () => {
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleString("vi-VN");
+    return date.toLocaleString("en-US");
   };
 
   const filteredAndSortedOrders = orders
@@ -80,25 +80,23 @@ const CancelledOrdersComponent = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg p-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
             <div>
               <h1 className="text-3xl font-bold text-red-600 mb-2">
-                Đơn hàng đã hủy
+                Cancelled Orders
               </h1>
               <p className="text-gray-600">
-                Quản lý các đơn hàng bị hủy hoặc từ chối
+                Manage orders that have been cancelled or rejected.
               </p>
             </div>
           </div>
 
-          {/* Search */}
           <div className="flex flex-col lg:flex-row gap-3">
             <div className="relative flex-1">
               <input
                 type="text"
-                placeholder="Tìm kiếm theo mã đơn hàng, tên khách hàng, email, SĐT..."
+                placeholder="Search by Order ID, Customer Name, Email, Phone..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full p-3 pl-10 border-2 border-red-200 rounded-xl focus:border-red-500 outline-none transition-colors"
@@ -116,35 +114,32 @@ const CancelledOrdersComponent = () => {
               }}
               className="p-3 border-2 border-red-200 rounded-xl focus:border-red-500 outline-none bg-white min-w-[200px]"
             >
-              <option value="orderDate-desc">Ngày hủy mới nhất</option>
-              <option value="orderDate-asc">Ngày hủy cũ nhất</option>
+              <option value="orderDate-desc">Newest Cancelled</option>
+              <option value="orderDate-asc">Oldest Cancelled</option>
             </select>
           </div>
         </div>
 
-        {/* Orders Table */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-xl font-bold text-red-600">
-              Danh sách đơn hàng đã hủy ({filteredAndSortedOrders.length})
+              Cancelled Orders List ({filteredAndSortedOrders.length})
             </h2>
           </div>
 
           {loading ? (
-            <div className="text-center py-12">Đang tải dữ liệu...</div>
+            <div className="text-center py-12">Loading data...</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-red-100">
                   <tr>
-                    <th className="px-6 py-4 text-left">Mã đơn hàng</th>
-                    <th className="px-6 py-4 text-left">Khách hàng</th>
-                    <th className="px-6 py-4 text-left">Ngày hủy</th>
-                    <th className="px-6 py-4 text-left">
-                      Phương thức thanh toán
-                    </th>
-                    <th className="px-6 py-4 text-left">Địa chỉ hóa đơn</th>
-                    <th className="px-6 py-4 text-left">Trạng thái</th>
+                    <th className="px-6 py-4 text-left">Order ID</th>
+                    <th className="px-6 py-4 text-left">Customer</th>
+                    <th className="px-6 py-4 text-left">Cancelled Date</th>
+                    <th className="px-6 py-4 text-left">Payment Method</th>
+                    <th className="px-6 py-4 text-left">Billing Address</th>
+                    <th className="px-6 py-4 text-left">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -182,10 +177,11 @@ const CancelledOrdersComponent = () => {
           {!loading && filteredAndSortedOrders.length === 0 && (
             <div className="text-center py-12">
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Không có đơn hàng đã hủy
+                No cancelled orders
               </h3>
               <p className="text-gray-500">
-                Hiện tại chưa có đơn hàng nào bị hủy hoặc từ chối.
+                There are currently no orders that have been cancelled or
+                rejected.
               </p>
             </div>
           )}
