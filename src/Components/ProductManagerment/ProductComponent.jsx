@@ -395,7 +395,7 @@ const ProductComponent = () => {
                 className="bg-[#78B3CE] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#5a8ba3] transition-colors shadow-lg"
                 disabled={categoryLoading}
               >
-                📂 Portfolio Management
+                📂 Category Management
               </button>
             </div>
           </div>
