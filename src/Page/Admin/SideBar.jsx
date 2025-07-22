@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const SideBar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -49,7 +50,14 @@ const SideBar = () => {
 
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out?")) {
-      alert("Successfully logged out");
+      // Clear authentication data
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+
+      // Show toast notification
+      toast.success("Successfully logged out");
+
+      // Redirect to login page
       navigate("/");
     }
   };
@@ -84,6 +92,7 @@ const SideBar = () => {
           </button>
         </div>
       </div>
+
       {/* Navigation Menu */}
       <nav className="flex-1 overflow-y-auto py-4">
         <ul className="space-y-2 px-4">
@@ -157,11 +166,12 @@ const SideBar = () => {
           ))}
         </ul>
       </nav>
-      {/* Footer */}
+
+      {/* Footer - Logout */}
       <div className="p-4 border-t border-[#C9E6F0] flex justify-center">
         <button
           onClick={handleLogout}
-          className={`flex items-center justify-center p-3 bg-red-400 hover:bg-red-500 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 active:bg-red-100 shadow-md hover:shadow-lg active:shadow-sm ${
+          className={`flex items-center justify-center p-3 bg-red-400 hover:bg-red-500 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg ${
             isCollapsed ? "w-12 h-12" : "space-x-2 px-6"
           }`}
           title="Logout"

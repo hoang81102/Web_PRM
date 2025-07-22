@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../API/authApi";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -10,12 +11,40 @@ const Login = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    const result = await loginUser(email, password);
 
-    if (result.success) {
-      navigate("/admin/users");
+    try {
+      const result = await loginUser(email, password);
+
+      if (result.success) {
+        const user = result.user;
+
+        console.log("Decoded user info:", user); // Debug xem thông tin user nhận được
+
+        // Lấy role an toàn - ưu tiên scope vì backend trả về scope
+        const role = (
+          user.role ||
+          user.Role ||
+          user.scope || // <-- Thêm dòng này để lấy scope
+          user.roles?.[0] ||
+          ""
+        ).toUpperCase();
+
+        if (role === "ADMIN") {
+          toast.success("Welcome, Admin!");
+          window.location.href = "/admin/users"; // Force reload để chắc chắn lưu token
+        } else {
+          toast.warning("You do not have admin permissions.");
+          navigate("/no-permission");
+        }
+      } else {
+        toast.error(
+          result.message || "Login failed! Please check your credentials."
+        );
+      }
+    } catch (error) {
+      toast.error("An error occurred during login!");
+      console.error(error);
     }
-    // Do nothing when login fails (no toast)
   };
 
   return (
