@@ -5,12 +5,12 @@ import { toast } from "react-toastify";
 const TOKEN_KEY = "token";
 const USER_INFO_KEY = "userInfo";
 
-// ✅ Đăng nhập
+// ✅ Login
 export const loginUser = async (email, password) => {
   try {
     const response = await axiosClient.post("/authentication/login", null, {
       params: { email, password },
-      skipAuth: true, // ⚡ không thêm Bearer token khi login
+      skipAuth: true, // ⚡ Skip Bearer token for login
     });
 
     console.log("Login response.data:", response.data);
@@ -21,87 +21,97 @@ export const loginUser = async (email, password) => {
       const userInfo = jwtDecode(token);
       localStorage.setItem(USER_INFO_KEY, JSON.stringify(userInfo));
 
-      toast.success("Đăng nhập thành công!");
+      toast.success("Login successful!");
       return { success: true, token, user: userInfo };
     }
 
-    toast.error("Không nhận được token.");
-    return { success: false, message: "Không nhận được token." };
+    toast.error("No token received.");
+    return { success: false, message: "No token received." };
   } catch (error) {
     console.error("ERROR RESPONSE", error.response);
-    const msg = error.response?.data?.message || "Đăng nhập thất bại!";
+    const msg = error.response?.data?.message || "Login failed!";
     toast.error(msg);
     return { success: false, message: msg };
   }
 };
 
-// ✅ Quên mật khẩu
+// ✅ Forgot Password (Sửa đúng theo Swagger)
 export const forgotPassword = async (email) => {
   try {
-    const response = await axiosClient.post("/authentication/forgot-password", {
-      email,
-    });
-    toast.success("Gửi email đặt lại mật khẩu thành công!");
+    const response = await axiosClient.post(
+      "/authentication/forgot-password",
+      null, // body null vì API nhận query param
+      {
+        params: { email },
+        skipAuth: true, // ⚡ Nếu API này không cần token
+      }
+    );
+    toast.success("Reset password email sent successfully!");
     return response.data;
   } catch (error) {
-    const msg = error.response?.data?.message || "Gửi email thất bại!";
+    const msg = error.response?.data?.message || "Failed to send email!";
     toast.error(msg);
     throw error;
   }
 };
 
-// ✅ Đổi mật khẩu
-export const changePassword = async (data) => {
+// ✅ Change Password
+export const changePassword = async ({ email, oldPassword, newPassword }) => {
   try {
     const response = await axiosClient.put(
       "/authentication/password-change",
-      data
+      null, // Không có body
+      {
+        params: { email, oldPassword, newPassword },
+      }
     );
-    toast.success("Đổi mật khẩu thành công!");
+    toast.success("Password changed successfully!");
     return response.data;
   } catch (error) {
-    const msg = error.response?.data?.message || "Đổi mật khẩu thất bại!";
+    const msg = error.response?.data?.message || "Failed to change password!";
     toast.error(msg);
     throw error;
   }
 };
 
-// ✅ Gửi mã xác thực
+
+// ✅ Send Verification Code
 export const sendVerificationCode = async (email) => {
   try {
     const response = await axiosClient.post(
       "/authentication/verification-code",
       { email }
     );
-    toast.success("Mã xác thực đã được gửi!");
+    toast.success("Verification code sent!");
     return response.data;
   } catch (error) {
-    const msg = error.response?.data?.message || "Không gửi được mã xác thực!";
+    const msg =
+      error.response?.data?.message || "Failed to send verification code!";
     toast.error(msg);
     throw error;
   }
 };
 
-// ✅ Đăng xuất
+// ✅ Logout
 export const logout = () => {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_INFO_KEY);
-  toast.info("Đã đăng xuất!");
+  toast.info("Logged out!");
 };
 
-// ✅ Lấy thông tin người dùng từ localStorage
+// ✅ Get user info from localStorage
 export const getUserInfo = () => {
   const raw = localStorage.getItem(USER_INFO_KEY);
   return raw ? JSON.parse(raw) : null;
 };
 
-// ✅ Kiểm tra đã đăng nhập chưa
+// ✅ Check if user is authenticated
 export const isAuthenticated = () => {
   const token = localStorage.getItem(TOKEN_KEY);
   return !!token;
 };
 
-// ✅ Làm mới thông tin người dùng từ token
+// ✅ Refresh user info from token
 export const refreshUserInfo = () => {
   const token = localStorage.getItem(TOKEN_KEY);
   if (token) {
@@ -110,7 +120,7 @@ export const refreshUserInfo = () => {
       localStorage.setItem(USER_INFO_KEY, JSON.stringify(decoded));
       return decoded;
     } catch (error) {
-      console.error("Token không hợp lệ:", error);
+      console.error("Invalid token:", error);
       logout();
       return null;
     }
@@ -118,5 +128,5 @@ export const refreshUserInfo = () => {
   return null;
 };
 
-// ✅ Lấy token hiện tại
+// ✅ Get current token
 export const getToken = () => localStorage.getItem(TOKEN_KEY);

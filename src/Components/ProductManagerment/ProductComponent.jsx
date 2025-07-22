@@ -122,7 +122,6 @@ const ProductComponent = () => {
     }).format(price);
   };
 
-
   // Hàm tìm kiếm và sắp xếp
   const filteredAndSortedProducts = products
     .filter((product) => {
@@ -498,7 +497,18 @@ const ProductComponent = () => {
               Product List ({filteredAndSortedProducts.length})
             </h2>
             <button
-              onClick={() => setShowAddModal(true)}
+              onClick={() => {
+                setFormData({
+                  productName: "",
+                  briDesc: "",
+                  fullDesc: "",
+                  technic: "",
+                  price: 0,
+                  imageURL: "",
+                  categoryID: "",
+                });
+                setShowAddModal(true);
+              }}
               className="bg-[#F96E2A] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#e55a1f] transition-colors shadow-lg"
               disabled={productLoading}
             >
@@ -523,7 +533,7 @@ const ProductComponent = () => {
                         onClick={() => handleSort("productName")}
                         className="flex items-center space-x-1 font-semibold text-[#78B3CE] hover:text-[#F96E2A] transition-colors"
                       >
-                        <span>Tên sản phẩm</span>
+                        <span>Product Name</span>
                         <span className="text-xs">
                           {sortBy === "productName"
                             ? sortOrder === "asc"
@@ -588,8 +598,14 @@ const ProductComponent = () => {
                           src={product.imageURL}
                           alt={product.productName}
                           className="w-16 h-16 object-cover rounded-lg shadow-sm"
+                          onError={(e) => {
+                            e.target.onerror = null; // Ngăn lặp vô hạn
+                            e.target.src =
+                              "https://static.vecteezy.com/system/resources/previews/022/059/000/large_2x/no-image-available-icon-vector.jpg"; // Link ảnh mặc định
+                          }}
                         />
                       </td>
+
                       <td className="px-6 py-4">
                         <div>
                           <p className="font-medium text-gray-900">

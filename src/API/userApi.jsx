@@ -1,7 +1,7 @@
 import axiosClient from "./axiosClient";
 import { toast } from "react-toastify";
 
-// ✅ Lấy tất cả người dùng
+// ✅ Get all users
 export const getAllUsers = async () => {
   try {
     const response = await axiosClient.get("/users");
@@ -13,15 +13,15 @@ export const getAllUsers = async () => {
       return userList;
     }
 
-    throw new Error("Dữ liệu người dùng không hợp lệ!");
+    throw new Error("Invalid user data!");
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách người dùng:", error);
-    toast.error("Không thể tải danh sách người dùng!");
+    console.error("Error fetching user list:", error);
+    toast.error("Failed to load user list!");
     throw error;
   }
 };
 
-// ✅ Lấy người dùng theo ID
+// ✅ Get user by ID
 export const getUserById = async (userID) => {
   try {
     const response = await axiosClient.get(`/users/${userID}`);
@@ -31,10 +31,10 @@ export const getUserById = async (userID) => {
       return user;
     }
 
-    throw new Error("Không tìm thấy người dùng!");
+    throw new Error("User not found!");
   } catch (error) {
-    console.error("Lỗi khi lấy thông tin người dùng:", error);
-    toast.error("Không thể lấy thông tin người dùng!");
+    console.error("Error fetching user details:", error);
+    toast.error("Failed to get user details!");
     throw error;
   }
 };

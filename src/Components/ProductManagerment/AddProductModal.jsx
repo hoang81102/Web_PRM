@@ -116,7 +116,10 @@ const AddProductModal = ({
               className="w-full p-3 border border-gray-300 rounded-lg focus:border-[#78B3CE] outline-none"
               required
               disabled={productLoading}
+              min="0"
+              step="any"
             />
+
             <p className="text-sm text-gray-500 mt-1">
               {formatUSD(formData.price)}
             </p>
@@ -132,7 +135,7 @@ const AddProductModal = ({
               name="imageURL"
               value={formData.imageURL}
               onChange={handleInputChange}
-              placeholder="https://example.com/image.jpg"
+              placeholder="https://cdn.tgdd.vn/hoi-dap/1356754/Thumbnail/hinh-anh-trong-may-tinh-khong-hien-len-nguyen-nhan-cach-thumb.jpg"
               className="w-full p-3 border border-gray-300 rounded-lg focus:border-[#78B3CE] outline-none"
               required
               disabled={productLoading}

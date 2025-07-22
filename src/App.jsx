@@ -13,6 +13,7 @@ import PrivateRoute from "./Components/PrivateRoute";
 import ProductComponent from "./Components/ProductManagerment/ProductComponent";
 import ShippedOrdersComponent from "./Components/OrderManagerment/ShippedOrdersComponent";
 import DeliveredOrdersComponent from "./Components/OrderManagerment/DeliveredOrdersComponent";
+import ChangePassword from "./Components/ChangePassword";
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
         {/* Public routes */}
         <Route path="/" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-
+        <Route path="/change-password" element={<ChangePassword />} />
         {/* Protected /admin routes */}
         <Route element={<PrivateRoute />}>
           <Route path="/admin/users" element={<AccountComponent />} />

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "../../Page/Admin/AdminLayout";
-import { getOrdersByStatus } from "../../API/orderApi";
+import { getOrdersByStatus, updateOrderStatus } from "../../API/orderApi";
+import { toast } from "react-toastify";
 
 const PendingOrdersComponent = () => {
   const [orders, setOrders] = useState([]);
@@ -9,37 +10,51 @@ const PendingOrdersComponent = () => {
   const [sortBy, setSortBy] = useState("orderDate");
   const [sortOrder, setSortOrder] = useState("desc");
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setLoading(true);
-        const data = await getOrdersByStatus("Pending");
-        if (Array.isArray(data)) {
-          setOrders(
-            data.map((order) => ({
-              id: `ORD${String(order.id).padStart(3, "0")}`,
-              customerName: order.user.username,
-              customerEmail: order.user.email,
-              customerPhone: order.user.phoneNumber,
-              customerAddress: order.user.address,
-              customerRole: order.user.role,
-              paymentMethod: order.pmMethod,
-              billAddress: order.bill,
-              status: order.orderStatus,
-              orderDate: order.orderDate,
-            }))
-          );
-        }
-      } catch (error) {
-        console.error("Failed to load pending orders:", error);
-        // Đã xóa toast.error
-      } finally {
-        setLoading(false);
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const data = await getOrdersByStatus("pending");
+      if (Array.isArray(data)) {
+        setOrders(
+          data.map((order) => ({
+            id: `ORD${String(order.id).padStart(3, "0")}`,
+            rawId: order.id,
+            customerName: order.user.username,
+            customerEmail: order.user.email,
+            customerPhone: order.user.phoneNumber,
+            customerAddress: order.user.address,
+            customerRole: order.user.role,
+            paymentMethod: order.pmMethod,
+            billAddress: order.bill,
+            status: order.orderStatus,
+            orderDate: order.orderDate,
+          }))
+        );
       }
-    };
+    } catch (error) {
+      console.error("Failed to load pending orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchOrders();
   }, []);
+
+  const handleConfirmShipping = async (order) => {
+    if (window.confirm(`Mark order ${order.id} as 'Shipping'?`)) {
+      try {
+        toast.dismiss(); // Xóa hết toast đang hiển thị
+
+        await updateOrderStatus(order.rawId, "shipping");
+
+        window.location.reload(); // Làm mới toàn trang
+      } catch (error) {
+        console.error("Error updating status:", error);
+      }
+    }
+  };
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -124,6 +139,7 @@ const PendingOrdersComponent = () => {
                     <th className="px-6 py-4 text-left">Billing Address</th>
                     <th className="px-6 py-4 text-left">Role</th>
                     <th className="px-6 py-4 text-left">Status</th>
+                    <th className="px-6 py-4 text-left">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -158,6 +174,14 @@ const PendingOrdersComponent = () => {
                         <span className="inline-block rounded-full px-3 py-1 text-xs bg-yellow-100 text-yellow-800">
                           {order.status}
                         </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => handleConfirmShipping(order)}
+                          className="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-sm"
+                        >
+                          Confirm Shipping
+                        </button>
                       </td>
                     </tr>
                   ))}

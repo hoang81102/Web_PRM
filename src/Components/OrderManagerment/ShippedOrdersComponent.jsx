@@ -13,7 +13,7 @@ const ShippedOrdersComponent = () => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const data = await getOrdersByStatus("Shipped");
+        const data = await getOrdersByStatus("arrived");
         if (Array.isArray(data)) {
           setOrders(
             data.map((order) => ({

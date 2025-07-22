@@ -13,7 +13,7 @@ const CancelledOrdersComponent = () => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const data = await getOrdersByStatus("Cancelled");
+        const data = await getOrdersByStatus("cancelled");
         if (Array.isArray(data)) {
           setOrders(
             data.map((order) => ({

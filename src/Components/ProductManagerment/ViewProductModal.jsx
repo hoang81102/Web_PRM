@@ -54,9 +54,9 @@ const ViewProductModal = ({ show, onClose, formData, categories }) => {
               </td>
             </tr>
             <tr className="odd:bg-gray-50 even:bg-white">
-              <td className="font-semibold p-2 border">Price (VND)</td>
+              <td className="font-semibold p-2 border">Price (USD)</td>
               <td className="p-2 border">
-                {Number(formData.price).toLocaleString()} đ
+                {Number(formData.price).toLocaleString()} USD
               </td>
             </tr>
             <tr className="odd:bg-gray-50 even:bg-white">

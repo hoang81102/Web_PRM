@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useLocation,useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const SideBar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -10,29 +10,29 @@ const SideBar = () => {
   const menuItems = [
     {
       id: "users",
-      title: "Quản lý người dùng",
+      title: "User Management",
       icon: "👥",
       path: "/admin/users",
       hasDropdown: false,
     },
     {
       id: "products",
-      title: "Quản lý sản phẩm",
+      title: "Product Management",
       icon: "📦",
       path: "/admin/products",
       hasDropdown: false,
     },
     {
       id: "orders",
-      title: "Quản lý đơn hàng",
+      title: "Order Management",
       icon: "🛒",
       path: "/admin/orders",
       hasDropdown: true,
       subItems: [
-        { title: "Đơn hàng mới", path: "/admin/orders/new" },
-        { title: "Đang xử lý", path: "/admin/orders/delivered" },
-        { title: "Đã hoàn thành", path: "/admin/orders/shipped" },
-        { title: "Đã hủy", path: "/admin/orders/cancelled" },
+        { title: "New Orders", path: "/admin/orders/new" },
+        { title: "Processing", path: "/admin/orders/delivered" },
+        { title: "Completed", path: "/admin/orders/shipped" },
+        { title: "Cancelled", path: "/admin/orders/cancelled" },
       ],
     },
   ];
@@ -48,11 +48,9 @@ const SideBar = () => {
   };
 
   const handleLogout = () => {
-    if (window.confirm("Bạn có chắc chắn muốn đăng xuất?")) {
-      // Handle logout logic here
-      alert("Đăng xuất thành công");
+    if (window.confirm("Are you sure you want to log out?")) {
+      alert("Successfully logged out");
       navigate("/");
-      
     }
   };
 
@@ -74,7 +72,7 @@ const SideBar = () => {
                 <h2 className="text-[#78B3CE] font-bold text-lg">
                   Admin Portal
                 </h2>
-                <p className="text-gray-500 text-xs">Hệ thống quản trị</p>
+                <p className="text-gray-500 text-xs">Management System</p>
               </div>
             </div>
           )}
@@ -166,13 +164,10 @@ const SideBar = () => {
           className={`flex items-center justify-center p-3 bg-red-400 hover:bg-red-500 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 active:bg-red-100 shadow-md hover:shadow-lg active:shadow-sm ${
             isCollapsed ? "w-12 h-12" : "space-x-2 px-6"
           }`}
-          title="Đăng xuất"
+          title="Logout"
         >
           <span className="text-lg">🚪</span>
-          {!isCollapsed && (
-            <span className="text-sm font-medium"
-            navi>Đăng xuất</span>
-          )}
+          {!isCollapsed && <span className="text-sm font-medium">Logout</span>}
         </button>
       </div>
     </div>

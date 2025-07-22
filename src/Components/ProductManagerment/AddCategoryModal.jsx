@@ -1,4 +1,5 @@
 import React from "react";
+import { toast } from "react-toastify";
 
 const AddCategoryModal = ({
   show,
@@ -17,9 +18,7 @@ const AddCategoryModal = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-[#78B3CE]">
-            Category Management
-          </h3>
+          <h3 className="text-xl font-bold text-[#78B3CE]">Category Management</h3>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 text-2xl"
@@ -79,10 +78,20 @@ const AddCategoryModal = ({
                     </span>
                   </div>
                   <button
-                    onClick={() => handleDeleteCategory(category.categoryID)}
+                    onClick={() => {
+                      if (productCount > 0) {
+                        toast.error("Cannot delete this category because it still contains products!");
+                        return;
+                      }
+                      handleDeleteCategory(category.categoryID);
+                    }}
                     className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors disabled:opacity-50"
-                    title="Delete category"
-                    disabled={productCount > 0 || categoryLoading}
+                    title={
+                      productCount > 0
+                        ? "Cannot delete category with products"
+                        : "Delete category"
+                    }
+                    disabled={categoryLoading}
                   >
                     🗑️
                   </button>
